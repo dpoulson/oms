@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl dark:text-gray-400 leading-tight">
             {{ __('Items') }}
         </h2>
     </x-slot>
@@ -11,9 +11,10 @@
                 @livewire('items')
             </div>
         </div>
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-full mx-auto sm:px-6 lg:px-8">
             <livewire:datatables.items-table 
             searchable='false'
+            hideable='true'
             />
         </div>
     </div>

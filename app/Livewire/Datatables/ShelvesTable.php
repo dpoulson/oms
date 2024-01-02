@@ -2,21 +2,21 @@
 
 namespace App\Livewire\Datatables;
 
-use App\Models\Box;
 use App\Models\Shelf;
+use App\Models\Location;
 use Illuminate\Database\Eloquent\Model;
 use Arm092\LivewireDatatables\Livewire\LivewireDatatable;
 use Arm092\LivewireDatatables\Column;
 use Illuminate\Database\Eloquent\Builder;
 
-class BoxesTable extends LivewireDatatable
+class ShelvesTable extends LivewireDatatable
 {
-    public string|null|Model $model = Box::class;
+    public string|null|Model $model = Shelf::class;
 
     public function builder(): Builder
     {
-        return Box::query()->leftJoin('shelves', 'shelves.id', 'boxes.shelf_id')
-                    ->where('boxes.team_id', auth()->user()->current_team_id);
+        return Shelf::query()->leftJoin('locations', 'locations.id', 'shelves.location_id')
+                    ->where('shelves.team_id', auth()->user()->current_team_id);
     }    
 
     public function getColumns(): array|Model
@@ -36,11 +36,11 @@ class BoxesTable extends LivewireDatatable
             ->editable()
             ->filterable(),
 
-            Column::name('shelf.name')
+            Column::name('location.name')
             ->searchable()
             ->hideable()
-            ->filterable($this->shelves)
-            ->label('Shelf'),
+            ->filterable($this->locations)
+            ->label('Location'),
 
             Column::callback(['id', 'name'], function ($id, $name) {
                 return view('table-actions', ['id' => $id, 'name' => $name]);
@@ -56,6 +56,11 @@ class BoxesTable extends LivewireDatatable
     public function getShelvesProperty()
     {
         return Shelf::where('team_id', auth()->user()->current_team_id)->pluck('name');
+    }
+
+    public function getLocationsProperty()
+    {
+        return Location::where('team_id', auth()->user()->current_team_id)->pluck('name');
     }
 }
 

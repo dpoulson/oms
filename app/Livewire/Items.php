@@ -6,11 +6,12 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Item;
 use App\Models\Box;
+use App\Models\Category;
 
 class Items extends Component
 {
-    public $items, $boxes, $item_id, $box_id;
-    public $name, $description, $use_quantity, $quantity, $low_quantity, $datasheet_url, $notes;
+    public $items, $boxes, $categories, $item_id, $box_id;
+    public $name, $description, $use_quantity, $quantity, $low_quantity, $datasheet_url, $notes, $category_id;
     public $updateMode = false;
 
     /**
@@ -27,9 +28,9 @@ class Items extends Component
         'name' => 'required|min:3|max:49',
         'description' => 'max:255',
         'use_quantity' => 'boolean|nullable',
-        'quantity' => 'integer',
-        'low_quantity' => 'boolean',
-        'datasheet_url' => 'url|nullable'
+        'quantity' => 'integer|nullable',
+        'datasheet_url' => 'url|nullable',
+        'box_id' => 'required|numeric|min:1'
     ];
 
     /**
@@ -41,6 +42,7 @@ class Items extends Component
     {
         $this->items = Item::where('team_id', auth()->user()->current_team_id)->get();
         $this->boxes = Box::where('team_id', auth()->user()->current_team_id)->get();
+        $this->categories = Category::all();
         return view('livewire.items');
     }  
     
@@ -59,9 +61,18 @@ class Items extends Component
       */
     public function store()
     {
-        //$this->validate();
         try {
-            Item::create([
+            $this->validate();
+        } catch (\Exception $ex) {
+            dd($ex);
+            session()->flash('error','Something goes wrong!!');
+        }
+        try {
+            if (!$this->use_quantity) {
+               $this->quantity = 0;
+               $this->use_quantity = false;
+            }
+            $newitem = Item::create([
                 'name' => $this->name,
                 'description' => $this->description,
                 'team_id' => auth()->user()->current_team_id,
@@ -71,7 +82,8 @@ class Items extends Component
                 'quantity' => $this->quantity,
                 'low_quantity' => false,
                 'datasheet_url' => $this->datasheet_url,
-                'notes' => $this->notes
+                'notes' => $this->notes,
+                'category_id' => $this->category_id
             ]);
             session()->flash('success','Item Created Successfully!!');
             $this->resetFields();

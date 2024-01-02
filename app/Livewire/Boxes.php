@@ -9,7 +9,7 @@ use App\Models\Shelf;
 
 class Boxes extends Component
 {
-    public $shelves, $boxes, $box, $name, $description, $box_id, $shelf_id;
+    public $shelves, $boxes, $quantity, $box, $name, $description, $box_id, $shelf_id;
     public $updateMode = false;
 
     /**
@@ -49,7 +49,7 @@ class Boxes extends Component
         $this->description = '';
     }
 
-     /**
+    /**
       * store the user inputted data in the table
       * @return void
       */
@@ -69,6 +69,32 @@ class Boxes extends Component
         } catch (\Exception $ex) {
             dd($ex);
             session()->flash('error','Something goes wrong!!');
+        }
+    }
+
+    /**
+    * store the user inputted data in the table
+    * @return void
+    */
+    public function bulk()
+    {
+        $prefix = $this->name;
+        for($x = 1; $x <= $this->quantity; $x++)
+        {
+            try {
+                Box::create([
+                    'name' => $prefix." ".$x,
+                    'description' => $this->description,
+                    'team_id' => auth()->user()->current_team_id,
+                    'user_id' => Auth::id(),
+                    'shelf_id' => $this->shelf_id
+                ]);
+                session()->flash('success','Box Created Successfully!!');
+                $this->resetFields();
+            } catch (\Exception $ex) {
+                dd($ex);
+                session()->flash('error','Something goes wrong!!');
+            }
         }
     }
  

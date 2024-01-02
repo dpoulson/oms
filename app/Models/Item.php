@@ -24,7 +24,8 @@ class Item extends Model
         'notes',
         'user_id',
         'team_id',
-        'box_id'
+        'box_id',
+        'category_id'
     ];
 
 
@@ -47,5 +48,10 @@ class Item extends Model
     {
         return $this->hasOneThrough(Shelf::class, Box::class);
     }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }    
 
 }
