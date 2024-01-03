@@ -24,6 +24,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->foreignId('box_id');
             $table->foreignId('user_id');
+            $table->foreignId('team_id');
             $table->foreignId('category_id');
 
         });

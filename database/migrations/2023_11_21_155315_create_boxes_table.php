@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('name');
             $table->text('description');
             $table->foreignId('shelf_id');
+            $table->foreignId('team_id');
             $table->foreignId('user_id');
         });
     }

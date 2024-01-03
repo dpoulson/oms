@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->foreignId('location_id');
             $table->foreignId('user_id');
+            $table->foreignId('team_id');
         });
     }
 
